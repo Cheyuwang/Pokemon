@@ -1,19 +1,23 @@
 #### Preamble ####
-# Purpose: Simulates... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Pokemon
+# Author: Che-Yu Wang
+# Date:  March 26th 204
+# Contact: Cheyu.wang@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: non
+
 
 
 #### Workspace setup ####
+
 library(tidyverse)
-# [...UPDATE THIS...]
 
 #### Simulate data ####
-# [...ADD CODE HERE...]
+data <-
+  tibble(
+    level = rnorm(n = 1000, mean = 100, sd = 10) |> floor(),
+    weakness = sample(x = c("fire", "not fire"), size = 1000, replace = FALSE)
+  )
 
 
 
