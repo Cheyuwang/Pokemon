@@ -1,13 +1,12 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "The relationship of Yellow card and Full-Time Away Team Goals "
+subtitle: "Analysis of Primer league 2023-24 season "
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: LINK."
+  - Che-Yu Wang 
+thanks: "Code and data are available at:https://github.com/Cheyuwang/Primer-league-analysis. "
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "Football match outcomes, especially Full-Time Away Team Goals (FTAG), are difficult to predict in sports analytics. This study uses 2024 Premier League data to examine how Home Team Yellow Cards (HY) affect away team scoring. The study uses logistic, Poisson, and negative binomial regressions to find the best statistical model for football score count data. Poisson regression, ideal for count data, assumes equal mean and variance, which is often violated in real-world data. Logistic regression models binary outcomes and may overlook nuanced count data. Negative binomial regression better represents data variability by adding an overdispersion parameter. The study evaluates each model's ability to capture football scoring patterns' complexities using statistical analysis, model comparison, and diagnostic measures. The findings emphasize the delicate balance between model complexity and predictive accuracy, emphasizing the importance of choosing the right model to understand away team goal-scoring trends. This meticulous approach improves football analytics predictive modelling and sports statistics by refining count-based outcome analysis.."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -28,6 +27,16 @@ library(palmerpenguins)
 You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
 
 The remainder of this paper is structured as follows. @sec-data....
+
+By 1900, a significant portion of the male population spent leisure time playing or watching sports, with football being a popular choice due to its spontaneity and order. The Victorian period marked the separation between work and leisure, with industrial work rhythms and rapid urban growth causing a shift in behavior and promoting leisure (Mason 2023). The Premier League is the highest level of the English football league system. Contested by 20 clubs, it operates on a system of promotion and relegation with the English Football League.
+
+The prediction of football match outcomes, particularly Full-Time Away Team Goals (FTAG), is a major challenge in the field of sports analytics. This challenge is driven not only by the inherent unpredictability of football matches, but also by a growing interest in understanding and forecasting sports events among academics and industry professionals. The ability to accurately predict these outcomes has important implications for strategic planning in sports management, the betting industry, and fan engagement. Despite the abundance of research in this area, football's dynamic and complex nature, characterized by unpredictable gameplay and a plethora of influencing factors, presents a persistent challenge in achieving high prediction accuracy. This gap emphasizes the importance of continuously refining predictive models capable of handling the complexities of football data.
+
+This research uses a large-scale dataset from the football-data.co.uk website and focuses on the 2024 Premier League season. Several metrics are included in the dataset, such as Home Team Yellow Cards (HY), which are thought to affect the away team's capacity for scoring. In the context of football match outcomes, the study attempts to analyze and comprehend the predictive power of logistic, Poisson, and negative binomial regression models. Every model offers a unique method for managing count data: logistic regression models binary outcomes, Poisson regression handles count data with equal variance and mean, and negative binomial regression adds a parameter to handle overdispersion.
+
+The comparative analysis of the study shows that, although logistic regression is a straightforward technique for forecasting discrete events, it might not make full use of the count data that is available, which could lead to information underutilization. Although poisson regression works well with count data, it often breaks down because it assumes equal mean and variance, which is rarely the case with football match results. Among the models that can better explain the variability and over dispersion found in football scoring data is negative binomial regression. The results indicate that negative binomial regression has a great deal of potential for increasing the accuracy of football match outcome predictions because they highlight the delicate balance between model complexity and predictive performance.
+
+This study's contribution to the developing field of sports analytics—which offers knowledge that can greatly enhance football match prediction modeling—makes it noteworthy. The study is a useful tool for analysts, researchers, and practitioners of sports analytics because it identifies the best statistical model for FTAG prediction. The study also lays the foundation for future research by highlighting the significance of model selection in comprehending and predicting athletic events. The structure of the paper is as follows: After the introduction, Section 2 reviews the literature and provides an overview of the field's prior research as well as its theoretical foundations. The methodology—which covers the dataset, variables taken into account, and statistical models employed—is covered in Section 3. The results and analysis, which contrast the predictive powers of logistic, Poisson, and negative binomial regressions, are presented in Section 4. The implications of the results, the limitations of the study, and potential future research directions are covered in Section 5's conclusion. 
 
 
 
