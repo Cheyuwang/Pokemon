@@ -1,26 +1,24 @@
 #### Preamble ####
-# Purpose: Downloads and saves the data from [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
-# License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Purpose: Downloads and saves the data from primer league 
+# Author: Che-Yu Wang 
+# Date: 11 February 2023 
+# Contact: cheyu.wang@mail.utoronto.ca 
 
 
 #### Workspace setup ####
-library(opendatatoronto)
-library(tidyverse)
-# [...UPDATE THIS...]
-
-#### Download data ####
-# [...ADD CODE HERE TO DOWNLOAD...]
+library(tidyverse)        # For data manipulation and writing CSV files
+library(janitor)          # For cleaning data
 
 
+#### Save ####
+# Saving the acquired dataset to a local CSV file in a raw data folder
+## The 2023-24 seasons Premier League data was found at: https://www.football-data.co.uk/englandm.php 
 
-#### Save data ####
-# [...UPDATE THIS...]
-# change the_raw_data to whatever name you assigned when you downloaded it.
-write_csv(the_raw_data, "inputs/data/raw_data.csv") 
+
+#### Save ####
+# Saving the acquired dataset to a local CSV file in a raw data folder
+write_csv(x = primer_league2024, 
+          file = "data/raw_data/primer.league2024.csv")
+
 
          

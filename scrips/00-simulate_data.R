@@ -6,18 +6,33 @@
 # License: MIT
 # Pre-requisites: non
 
-
-
-#### Workspace setup ####
-
+# work set up 
 library(tidyverse)
 
-#### Simulate data ####
-data <-
-  tibble(
-    level = rnorm(n = 1000, mean = 100, sd = 10) |> floor(),
-    weakness = sample(x = c("fire", "not fire"), size = 1000, replace = FALSE)
-  )
+# Set seed for reproducibility
+set.seed(853)
+
+# List of Premier League teams (as of a recent season; update if needed)
+premier_league_teams <- c(
+  "Arsenal", "Aston Villa", "Brentford", "Brighton", "Chelsea", 
+  "Crystal Palace", "Everton", "Fulham", "Leeds United", "Leicester City", 
+  "Liverpool", "Manchester City", "Manchester United", "Newcastle United", 
+  "Nottingham Forest", "Southampton", "Tottenham Hotspur", "West Ham United", 
+  "Wolverhampton Wanderers"
+)
+
+# Simulate sports data
+simulated_match_data <- tibble(
+  match_date = rep(x = as.Date("2023-01-01") + c(0:364), times = 1),
+  away_team = sample(premier_league_teams, 365, replace = TRUE),
+  yellow_cards = rpois(n = 365, lambda = 3),  # Average 3 yellow cards per game
+  full_time_away_goals = rpois(n = 365, lambda = 1)  # Average 1 goal per game
+)
+
+head(simulated_match_data)
+
+
+
 
 
 

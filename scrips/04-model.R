@@ -8,30 +8,36 @@
 # Any other information needed? [...UPDATE THIS...]
 
 
+
 #### Workspace setup ####
-library(tidyverse)
-library(rstanarm)
+library(tidyverse)  # for data manipulation and visualization
+library(readr)      # for reading CSV data
+library(here)       # for easier path management
+library(Rcpp)       # for seamless R and C++ integration
+library(rstanarm)   # for Bayesian modeling
+library(dplyr)      # for data manipulation
+
 
 #### Read data ####
-analysis_data <- read_csv("data/analysis_data/analysis_data.csv")
-
+analysis_data <- read_csv("data/raw_data/primer.league2024.csv")
+#### Prepare data for modeling ####
+football_sample <- 
+  football |>
+  slice_sample(n = 853)  # Randomly sample 1000 observations for modeling
 ### Model data ####
-first_model <-
-  stan_glm(
-    formula = flying_time ~ length + width,
-    data = analysis_data,
-    family = gaussian(),
-    prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
-    prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
-    prior_aux = exponential(rate = 1, autoscale = TRUE),
-    seed = 853
-  )
+
+football_model <- stan_glm(
+  formula = FTAG ~ AY,
+  data = football_sample,
+  family = poisson(link = "log"),  # Suitable for count data
+  prior = normal(location = 0, scale = 2.5),  # Priors based on domain knowledge
+  prior_intercept = normal(location = 0, scale = 2.5),
+  prior_aux = exponential(rate = 1),  # Auxiliary prior for dispersion
+  seed = 853)  # For reproducibility
 
 
 #### Save model ####
-saveRDS(
-  first_model,
-  file = "models/first_model.rds"
-)
+saveRDS(football_model, file = "models/football_model.rds") 
+
 
 
