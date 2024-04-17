@@ -28,6 +28,7 @@ library(knitr)
 library(dplyr)
 library(tibble)
 library(readr)
+library(broom)
 ```
 
 ```{r}
@@ -57,9 +58,8 @@ This study's contribution to the developing field of sports analytics—which of
 # Data {#sec-data}
 
 One of the biggest football betting websites in the UK, football-Data.co.uk, is where the data was gathered. (soccer-Data 2024) @citeFootballDataUK. The website has all of the global football league data, including all of the results from every year with every possible outcome. 
-I analysis the data in R(R Core Team (2023)), with additional tools for support the analysis, including tidyverse(Wickham et al. 2019), here(Müller 2020), dplyr(Wickham et
-al. 2023), readr(Wickham, Hester, and Bryan 2023), modelsummary(Arel-Bundock 2022),
-janitor(Firke 2023), tibble(Müller and Wickham 2023), ggplot2(Wickham 2016), rstanarm (Goodrich et al. 2020) and research method is from Alexander (2023).
+I analysis the data in R(@citeR), with additional tools for support the analysis, including tidyverse(@citetidyverse), here(@citehere), dplyr(@citedplyr), readr(citereadr), modelsummary(@citedplyr),
+janitor(@citejanitor), tibble(@citetibble), ggplot2(@citeggplot2), rstanarm (@rstanarm) and research method is from Alexander (@tellingstorieswithdata),and the article of (@mason2023association), (@soares2016quantitative).
 
 ## Variables 
 The primary factors influencing game dynamics in the analysis of football matches are scoring outcomes and disciplinary measures. One important predictor is the variable 'HY', which stands for the number of yellow cards given to the home team. It is hypothesized that yellow cards, a form of discipline for fouls and unsportsmanlike conduct, will affect the performance of the home team and the atmosphere of the match. The dependent variable 'FTAG' represents the number of goals scored by the opposing team at the conclusion of the game. The study investigates the connection between the away team's scoring success and the home team's disciplinary actions using a Poisson regression model. This analysis can guide coaching and game preparation tactics and is essential for comprehending team behaviour. 
@@ -76,6 +76,7 @@ The table 1 displays data on football match analysis, such as disciplinary actio
 ## Alternative Data Considerations
 
 In this part, I choose a better understanding in comprehension of the dataset. The histogram in @fig-1 shows the frequency of football matches categorized by the number of yellow cards awarded to home teams. The graph shows a clear mode at 1 yellow card, indicating that most matches involve a single yellow card. The frequency decreases as the number of yellow cards increases, with two yellow cards being the second most common occurrence. A progressive decline for three or more cards suggests a general discipline level in teams when playing at home, with a majority avoiding high counts of yellow cards. Matches with no yellow cards are less frequent than those with one or two, suggesting at least one caution per game. The instances of 4, 5, and 6 yellow cards are rarer, highlighting outliers in typical in-game conduct. The sharp decrease after three yellow cards suggests that it is uncommon for home teams to receive a high number of cautions in a single match, potentially indicating unusually aggressive or unruly play. 
+The @tbl-1 displays data on football match analysis, such as disciplinary actions ('HY' for Home Yellow Cards) and team identifiers ('FTAG'). However, instead of team names, the 'FTAG' column is expected to contain Full Time Away Goals, a numerical variable. This inconsistency indicates either a mislabeling or incorrect data representation. In an optimal state, 'HY' would quantify the number of yellow cards issued to the home team during individual matches, whereas 'FTAG' would quantify the away team's success rate in scoring goals at full-time. This would allow for a thorough investigation of the relationship between home team discipline and the opposing team's scoring ability. A verification and correction process is required to align 'FTAG' with the numerical goal data. Once accurate, the dataset will be fed into a Poisson regression model, which could reveal dynamics in football matches and potentially influence game strategy and team behaviour regulation.
 
 ```{r}
 #| label: fig-1
@@ -91,7 +92,7 @@ football |>
     y = "Number of Matches"
   )
 ```
-The @tbl-1 displays data on football match analysis, such as disciplinary actions ('HY' for Home Yellow Cards) and team identifiers ('FTAG'). However, instead of team names, the 'FTAG' column is expected to contain Full Time Away Goals, a numerical variable. This inconsistency indicates either a mislabeling or incorrect data representation. In an optimal state, 'HY' would quantify the number of yellow cards issued to the home team during individual matches, whereas 'FTAG' would quantify the away team's success rate in scoring goals at full-time. This would allow for a thorough investigation of the relationship between home team discipline and the opposing team's scoring ability. A verification and correction process is required to align 'FTAG' with the numerical goal data. Once accurate, the dataset will be fed into a Poisson regression model, which could reveal dynamics in football matches and potentially influence game strategy and team behaviour regulation.
+
 
 ```{r}
 #| label: tbl-1
@@ -160,11 +161,13 @@ Poisson analysis is a statistical method for modelling count data, with the outc
 
 # Results
 
-In @tbl-2, The Poisson regression analysis looks at the relationship between the number of yellow cards issued to the home team (HY) and the number of goals scored by the opposing team. According to the findings, as the number of home yellow cards increases, so does the expected log count of away goals, but only slightly and not significantly.However,we have our results that shows Poisson regression model is used to calculate the number of Full-Time Away Goals (FTAG) in football matches, with Home Yellow Cards serving as the predictor variable. The model estimates the intercept (0.30054) and the HY coefficient (0.04215), which represent the expected change in the log count of away goals for each additional home yellow card issued. However, the relationship between home yellow cards and away goals is not statistically significant, implying that yellow cards have no strong or consistent effect on the number of goals scored by the away team. The AIC (969.53) and the small difference between the null and residual deviance indicate that including the number of home yellow cards has no significant impact on the model's predictive capability. The model's summary indicates that other factors may better explain the variability in away goals, or that the effect of yellow cards is too subtle to detect in this dataset.
+The @tbl-2 Poisson regression analysis shows a statistical relationship between the number of yellow cards issued to the home team (HY) and the number of full-time away goals (FTAG) in a set of football matches. The model's intercept represents a baseline rate of away goals when no yellow cards are issued to the home team, implying that away teams have a measurable and significant propensity to score goals regardless of the home team's discipline. However, the coefficient for HY is approximately 0.0421, with a standard error of 0.0323, which exceeds the conventional threshold for statistical significance. This suggests that disciplinary actions measured by yellow cards issued to the home team have little direct impact on the away team's scoring results. It also raises the possibility that factors other than those captured in this simple model may have a greater influence on the number of goals scored by the away team, such as defensive and offensive capabilities, coaching strategic decisions, or players' psychological states. This analysis highlights the complexities of football match dynamics and warns against attributing scoring patterns to single variables like disciplinary actions.These statistics are critical for determining the model's predictive ability and guiding the selection of the best complex model for the data.
+
+The model's fit is moderate, and the influence of home yellow cards on away goals is not pronounced. This suggests that other factors may be more predictive of the number of goals the away team scores, or that the relationship between home yellow cards and away goals is complex and possibly non-linear, which a simple Poisson regression model cannot capture. This lack of a significant relationship suggests the multifactorial nature of football scoring dynamics and the need for a broader investigation into match events and outcomes.
 
 ```{r}
 #| label: tbl-2
-#| fig-cap: Kabble for poisson regresion 
+#| tbl-cap: Kabble 1 for poisson regresion 
 #| echo: false
 # Fit the model
 
@@ -172,9 +175,13 @@ In @tbl-2, The Poisson regression analysis looks at the relationship between the
 football_poisson <- glm(FTAG ~ HY, data = football, family = poisson())
 
 # Check the summary of the model
-#summary(football_poisson)
+knitr::kable(tidy(football_poisson))
 ```
 
+
+
+
+\newpage 
 The bar chart @fig-2 , the Poisson distribution that is used to model the frequency of occurrence in football games is represented visually in a bar chart. It quantifies the difference in away teams' offensive success by classifying matches according to full-time away goals, which vary from 0 to 7.5. The y-axis measures the frequency of each away goal tally in the dataset by quantifying the matches. The graph also displays a standard Poisson distribution, in which matches with the highest frequency of lower away goals have a progressive decline in goal frequency as the number of goals rises. The chart also shows variation in the amount of yellow cards awarded for various goal totals. Higher yellow card counts do not, however, appear to be correlated with any particular range of away goals, indicating that the dataset does not have a strong linear relationship. To conduct a more thorough analysis, it would be necessary to investigate the significance of the visual patterns that were noticed, like the frequency with which matches ended with one or no yellow cards. One would need to delve deeper into statistical measures like regression analyses, chi-squared goodness of fit tests, and variance to mean ratio in order to fully comprehend the dynamics at play. This figure offers a concise, preliminary representation of the distribution of the data among the variables under investigation.
 
 ```{r}
