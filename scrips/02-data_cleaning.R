@@ -11,7 +11,7 @@ install.packages(rstanarm)
 library(tidyverse)
 library(rstanarm)
 
-football <- read.csv("data/raw_data/primer.league2024.csv")
+football <- read.csv(here::here("data", "raw_data", "primer.league2024.csv"))
 
 #### Clean data fit model ####
 football |>
@@ -27,13 +27,7 @@ football_poisson <-
     seed = 853
   )
 
-football_neg_binomial <-
-  stan_glm(
-    FTAG ~ HY,
-    data = football,
-    family = neg_binomial_2(link = "log"),
-    seed = 853
-  )
+
 
 saveRDS(
   football_poisson,

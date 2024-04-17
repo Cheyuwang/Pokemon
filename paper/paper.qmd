@@ -17,22 +17,36 @@ bibliography: references.bib
 #| warning: false
 #| message: false
 
+####workspcae setup####
+#install.packages("rstanarm")
+
 library(tidyverse)
-library(palmerpenguins)
+library(here)
+library(rstanarm)
+library(modelsummary)
+library(knitr)
+library(dplyr)
+library(tibble)
+library(readr)
 ```
 
+```{r}
+#| include: false
+#| warning: false
+#| message: false
 
+# Correctly reading the file
+football <- read.csv(here::here("data", "raw_data", "primer.league2024.csv"))
+
+
+```
 # Introduction
-
-You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
-
-The remainder of this paper is structured as follows. @sec-data....
 
 By 1900, a significant portion of the male population spent leisure time playing or watching sports, with football being a popular choice due to its spontaneity and order. The Victorian period marked the separation between work and leisure, with industrial work rhythms and rapid urban growth causing a shift in behavior and promoting leisure (Mason 2023). The Premier League is the highest level of the English football league system. Contested by 20 clubs, it operates on a system of promotion and relegation with the English Football League.
 
 The prediction of football match outcomes, particularly Full-Time Away Team Goals (FTAG), is a major challenge in the field of sports analytics. This challenge is driven not only by the inherent unpredictability of football matches, but also by a growing interest in understanding and forecasting sports events among academics and industry professionals. The ability to accurately predict these outcomes has important implications for strategic planning in sports management, the betting industry, and fan engagement. Despite the abundance of research in this area, football's dynamic and complex nature, characterized by unpredictable gameplay and a plethora of influencing factors, presents a persistent challenge in achieving high prediction accuracy. This gap emphasizes the importance of continuously refining predictive models capable of handling the complexities of football data.
 
-This research uses a large-scale dataset from the football-data.co.uk website and focuses on the 2024 Premier League season. Several metrics are included in the dataset, such as Home Team Yellow Cards (HY), which are thought to affect the away team's capacity for scoring. In the context of football match outcomes, the study attempts to analyze and comprehend the predictive power of logistic, Poisson, and negative binomial regression models. Every model offers a unique method for managing count data: logistic regression models binary outcomes, Poisson regression handles count data with equal variance and mean, and negative binomial regression adds a parameter to handle overdispersion.
+This research uses a large-scale dataset from the football-data.co.uk website (soccer-Data 2024) and focuses on the 2024 Premier League season. We use @citeR, @citeFootballDataUK to completed and hlep our analysis. Several metrics are included in the dataset, such as Home Team Yellow Cards (HY), which are thought to affect the away team's capacity for scoring. In the context of football match outcomes, the study attempts to analyze and comprehend the predictive power of logistic, Poisson, and negative binomial regression models. Every model offers a unique method for managing count data: logistic regression models binary outcomes, Poisson regression handles count data with equal variance and mean, and negative binomial regression adds a parameter to handle overdispersion.
 
 The comparative analysis of the study shows that, although logistic regression is a straightforward technique for forecasting discrete events, it might not make full use of the count data that is available, which could lead to information underutilization. Although poisson regression works well with count data, it often breaks down because it assumes equal mean and variance, which is rarely the case with football match results. Among the models that can better explain the variability and over dispersion found in football scoring data is negative binomial regression. The results indicate that negative binomial regression has a great deal of potential for increasing the accuracy of football match outcome predictions because they highlight the delicate balance between model complexity and predictive performance.
 
@@ -42,130 +56,169 @@ This study's contribution to the developing field of sports analytics—which of
 
 # Data {#sec-data}
 
-Our data is of penguins (@fig-bills), from @palmerpenguins.
+One of the biggest football betting websites in the UK, football-Data.co.uk, is where the data was gathered. (soccer-Data 2024) @citeFootballDataUK. The website has all of the global football league data, including all of the results from every year with every possible outcome. 
+I analysis the data in R(R Core Team (2023)), with additional tools for support the analysis, including tidyverse(Wickham et al. 2019), here(Müller 2020), dplyr(Wickham et
+al. 2023), readr(Wickham, Hester, and Bryan 2023), modelsummary(Arel-Bundock 2022),
+janitor(Firke 2023), tibble(Müller and Wickham 2023), ggplot2(Wickham 2016), rstanarm (Goodrich et al. 2020) and research method is from Alexander (2023).
+
+## Variables 
+The primary factors influencing game dynamics in the analysis of football matches are scoring outcomes and disciplinary measures. One important predictor is the variable 'HY', which stands for the number of yellow cards given to the home team. It is hypothesized that yellow cards, a form of discipline for fouls and unsportsmanlike conduct, will affect the performance of the home team and the atmosphere of the match. The dependent variable 'FTAG' represents the number of goals scored by the opposing team at the conclusion of the game. The study investigates the connection between the away team's scoring success and the home team's disciplinary actions using a Poisson regression model. This analysis can guide coaching and game preparation tactics and is essential for comprehending team behaviour. 
+
+## Data cleaning preparation 
+The analysis relied on a dataset from a reputable football statistics website, ensuring high accuracy and completeness. The variables 'HY' (Home Yellow Cards) and 'FTAG' (Full Time Away Goals) were highlighted as critical for understanding disciplinary actions and their impact on match outcomes. These variables have a count data structure, making them ideal for Poisson regression. This statistical method accurately models the probability of a number of events occurring in a given period of time, assuming a known constant mean rate that is independent of time since the last event. The Poisson distribution was chosen because it accurately models the probability of events occurring over a fixed period.
+
+## Visualizations and Summary Statistics
+In this part, I choose a better understanding in comprehension of the dataset. The histogram in Figure 1 shows the frequency of football matches categorized by the number of yellow cards awarded to home teams. The graph shows a clear mode at 1 yellow card, indicating that most matches involve a single yellow card. The frequency decreases as the number of yellow cards increases, with two yellow cards being the second most common occurrence. A progressive decline for three or more cards suggests a general discipline level in teams when playing at home, with a majority avoiding high counts of yellow cards. Matches with no yellow cards are less frequent than those with one or two, suggesting at least one caution per game. The instances of 4, 5, and 6 yellow cards are rarer, highlighting outliers in typical in-game conduct. The sharp decrease after three yellow cards suggests that it is uncommon for home teams to receive a high number of cautions in a single match, potentially indicating unusually aggressive or unruly play. 
+The table 1 displays data on football match analysis, such as disciplinary actions ('HY' for Home Yellow Cards) and team identifiers ('FTAG'). However, instead of team names, the 'FTAG' column is expected to contain Full Time Away Goals, a numerical variable. This inconsistency indicates either a mislabeling or incorrect data representation. In an optimal state, 'HY' would quantify the number of yellow cards issued to the home team during individual matches, whereas 'FTAG' would quantify the away team's success rate in scoring goals at full-time. This would allow for a thorough investigation of the relationship between home team discipline and the opposing team's scoring ability. A verification and correction process is required to align 'FTAG' with the numerical goal data. Once accurate, the dataset will be fed into a Poisson regression model, which could reveal dynamics in football matches and potentially influence game strategy and team behaviour regulation.
+
+
+
+## Alternative Data Considerations
+
+In this part, I choose a better understanding in comprehension of the dataset. The histogram in @fig-1 shows the frequency of football matches categorized by the number of yellow cards awarded to home teams. The graph shows a clear mode at 1 yellow card, indicating that most matches involve a single yellow card. The frequency decreases as the number of yellow cards increases, with two yellow cards being the second most common occurrence. A progressive decline for three or more cards suggests a general discipline level in teams when playing at home, with a majority avoiding high counts of yellow cards. Matches with no yellow cards are less frequent than those with one or two, suggesting at least one caution per game. The instances of 4, 5, and 6 yellow cards are rarer, highlighting outliers in typical in-game conduct. The sharp decrease after three yellow cards suggests that it is uncommon for home teams to receive a high number of cautions in a single match, potentially indicating unusually aggressive or unruly play. 
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
+#| label: fig-1
+#| fig-cap: "Figure 1"
 #| echo: false
 
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
+football |>
+  ggplot(aes(x = as.factor(HY))) +
+  geom_bar() +
   theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
+  labs(
+    x = "Home Yellow Cards",
+    y = "Number of Matches"
+  )
 ```
+The @tbl-1 displays data on football match analysis, such as disciplinary actions ('HY' for Home Yellow Cards) and team identifiers ('FTAG'). However, instead of team names, the 'FTAG' column is expected to contain Full Time Away Goals, a numerical variable. This inconsistency indicates either a mislabeling or incorrect data representation. In an optimal state, 'HY' would quantify the number of yellow cards issued to the home team during individual matches, whereas 'FTAG' would quantify the away team's success rate in scoring goals at full-time. This would allow for a thorough investigation of the relationship between home team discipline and the opposing team's scoring ability. A verification and correction process is required to align 'FTAG' with the numerical goal data. Once accurate, the dataset will be fed into a Poisson regression model, which could reveal dynamics in football matches and potentially influence game strategy and team behaviour regulation.
 
-Talk more about it.
+```{r}
+#| label: tbl-1
+#| tbl-cap: "Yellow card with Primer league team in away match  "
+#| echo: false
 
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
+football_HY <- tibble(
+  HY = rep(c(0, 1, 2, 3, 4, 5), length.out = 19),  # Repeat HY values to match AwayTeam length
+  premier_league_teams = c(
+    "Arsenal", "Aston Villa", "Brentford", "Brighton", "Chelsea", 
+    "Crystal Palace", "Everton", "Fulham", "Leeds United", "Leicester City", 
+    "Liverpool", "Manchester City", "Manchester United", "Newcastle United", 
+    "Nottingham Forest", "Southampton", "Tottenham Hotspur", "West Ham United", 
+    "Wolverhampton Wanderers"
+  )
+)
 
+# Print the tibble to the console
+print(football_HY)
+```
+\newpage
 
-
-Talk way more about it. 
-
-
+# Measurement 
+Two variables make up the dataset: 'HY', which stands for Home Yellow Cards, and 'FTAG', which records visiting teams' scoring prowess. "HY" measures the quantity of warnings for infractions or unsportsmanlike behaviour that referees have given to the home team; these warnings are documented in official logs and validated by the relevant football associations. These incidents are painstakingly transformed into data points so that the disciplinary actions taken during several matches can be combined and statistically analyzed. Every goal an away team scores is recorded as a unique event in 'FTAG,' which documents the scoring prowess of visiting teams. These goals are frequently the consequence of offensive skill and strategic play. To guarantee a high fidelity representation of each team's scoring record in an away context, these tallies are combined and sent to data curators, such as football statistics websites. As a numerical value that corresponds to the 'FTAG' column in the dataset, the raw goal count represents the outcome of a sequence of events and reactions that take place in the turbulent atmosphere of a football game. Both variables require rigorous recording, validation, and data entry protocols in order to transform transient and complex real-world events into structured data that is ready for analysis.
 
 # Model
 
-The goal of our modelling strategy is twofold. Firstly,...
+Poisson analysis is a statistical method for modelling count data, with the outcome variable representing the number of occurrences of a specific event within a given unit of time, area, or volume. This approach assumes that events occur independently at a constant average rate throughout the duration or space of interest. The Poisson distribution, with the parameter lambda ($\lambda$), describes the probability of observing a certain number of events within a given interval. It is versatile and useful in a variety of fields, including epidemiology, finance, telecommunications, and sports analytics. By applying Poisson models to count data, analysts can uncover underlying patterns, identify factors that influence event frequency, and make informed predictions about future occurrences.
 
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
 
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
+$ \beta_1 \sim \text{Normal}(0, 2.5) $
+These priors are normally distributed with a mean of 0, indicating no initial bias towards either an increase or decrease in the count of `FTAG`. - A standard deviation of 2.5 for these priors reflects a moderate level of uncertainty about the coefficients.
+The probability mass function of the Poisson distribution is as follows, giving the probability of observing exactly events:
 
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
+$$
+P_{\lambda}(k) = e^{-\lambda} \frac{\lambda^k}{k!}, \quad \text{for } k = 0, 1, 2, \ldots 
+$$
+Here, $(k)$ denotes the probability of observing exactly k events (in our case, the number of goals scored, denoted as FTAG) in a given time frame. The parameter  $ {\lambda}$ represents the average rate at which these events occur, and it also serves as the variance of the distribution
+
+- $P_{\lambda}(k)$: The probability of observing $k$ `FTAG`.
+- $e$: The base of the natural logarithm.
+- $\frac{\lambda^k}{k!}$: The probability mass function of the Poisson distribution, where $k!$ denotes the factorial of $k$
+
+The factorial function, denoted by $k!$, is the product of all positive integers up to $k$. This function in the denominator normalizes the distribution to ensure that the sum of probabilities across all possible counts of `FTAG` equals 1.
+When interpreting the results of this model, if $\beta_1$ is significantly different from zero, it suggests that there is a statistically significant association between `HY` and the expected count of `FTAG`. A positive $\beta_1$ indicates that as `HY` increases, the expected count of `FTAG` increases, and vice versa.
+
+
+\begin{align}
+y_i|\lambda_i &\sim \text{Poisson}(\lambda_i) \\
+\log(\lambda_i) &= \beta_0 + \beta_1 \times \text{Number of words}_i \\
+\beta_0 &\sim \text{Normal}(0, 2.5) \\
+\beta_1 &\sim \text{Normal}(0, 2.5)
+y_i|\lambda_i &\sim \text{Poisson}(\lambda_i) \\
+\log(\lambda_i) &= \beta_0 + \beta_1 \times \text{department}_i\\
+P_{\lambda}(k) &= e^{-\lambda} \frac{\lambda^k}{k!}, \quad \text{for } k = 0, 1, 2, \ldots
 \end{align}
-
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
 
 
 ### Model justification
 
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
+Poisson analysis is a statistical method for modelling count data, with the outcome variable representing the number of occurrences of a specific event within a given unit of time, area, or volume. This approach. Assumes that events occur independently at a constant average rate throughout the duration or space of interest. The Poisson distribution, with the parameter lambda, describes the probability of observing a certain number of events within a given interval. It is versatile and useful in a variety of fields, including epidemiology, finance, telecommunications, and sports analytics. By applying Poisson models to count data, analysts can uncover underlying patterns, identify factors that influence event frequency, and make informed predictions about future occurrences.
 
-We can use maths by including latex between dollar signs, for instance $\theta$.
-
+\newpage 
 
 # Results
 
-Our results are summarized in @tbl-modelresults.
+In @tbl-2, The Poisson regression analysis looks at the relationship between the number of yellow cards issued to the home team (HY) and the number of goals scored by the opposing team. According to the findings, as the number of home yellow cards increases, so does the expected log count of away goals, but only slightly and not significantly.However,we have our results that shows Poisson regression model is used to calculate the number of Full-Time Away Goals (FTAG) in football matches, with Home Yellow Cards serving as the predictor variable. The model estimates the intercept (0.30054) and the HY coefficient (0.04215), which represent the expected change in the log count of away goals for each additional home yellow card issued. However, the relationship between home yellow cards and away goals is not statistically significant, implying that yellow cards have no strong or consistent effect on the number of goals scored by the away team. The AIC (969.53) and the small difference between the null and residual deviance indicate that including the number of home yellow cards has no significant impact on the model's predictive capability. The model's summary indicates that other factors may better explain the variability in away goals, or that the effect of yellow cards is too subtle to detect in this dataset.
 
 ```{r}
+#| label: tbl-2
+#| fig-cap: Kabble for poisson regresion 
 #| echo: false
-#| eval: true
-#| warning: false
-#| message: false
+# Fit the model
 
-library(rstanarm)
+# Fit the Poisson regression model
+football_poisson <- glm(FTAG ~ HY, data = football, family = poisson())
 
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
+# Check the summary of the model
+#summary(football_poisson)
 ```
+
+The bar chart @fig-2 , the Poisson distribution that is used to model the frequency of occurrence in football games is represented visually in a bar chart. It quantifies the difference in away teams' offensive success by classifying matches according to full-time away goals, which vary from 0 to 7.5. The y-axis measures the frequency of each away goal tally in the dataset by quantifying the matches. The graph also displays a standard Poisson distribution, in which matches with the highest frequency of lower away goals have a progressive decline in goal frequency as the number of goals rises. The chart also shows variation in the amount of yellow cards awarded for various goal totals. Higher yellow card counts do not, however, appear to be correlated with any particular range of away goals, indicating that the dataset does not have a strong linear relationship. To conduct a more thorough analysis, it would be necessary to investigate the significance of the visual patterns that were noticed, like the frequency with which matches ended with one or no yellow cards. One would need to delve deeper into statistical measures like regression analyses, chi-squared goodness of fit tests, and variance to mean ratio in order to fully comprehend the dynamics at play. This figure offers a concise, preliminary representation of the distribution of the data among the variables under investigation.
 
 ```{r}
+#| label: fig-2
+#| fig-cap: Bar Chart for poisson regresion 
 #| echo: false
-#| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
-#| warning: false
 
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
+
+football |>
+  ggplot(aes(x = FTAG, fill = factor(HY))) +  # Ensure HY is treated as a factor
+  geom_histogram(position = "dodge", binwidth = 1) +  # Specify binwidth appropriate for your data
+  labs(
+    x = "Full-Time Away Goals",
+    y = "Count of Matches",
+    fill = "Home Yellow Cards"
+  ) +
+  theme_classic() +
+  scale_fill_brewer(palette = "Set1") +  # Manually specify colors
+  theme(legend.position = "bottom")
+
+
 ```
 
-
-
+\newpage 
 
 # Discussion
 
-## First discussion point {#sec-first-point}
+## Finding {#sec-first-point}
+This paper investigates the relationship between disciplinary actions, such as yellow cards issued to home teams, and away teams' subsequent scoring success during full-time matches in association football. The study uses a dataset from football-data.co.uk, a comprehensive source of match statistics, and Poisson regression analysis to investigate the impact of home team yellow cards on away team goals. The hypothesis is that increased disciplinary action against the home team may result in more scoring opportunities for the opposing team. A visual analytical approach is also used, with a Poisson distribution bar chart used to visually identify patterns or anomalies in the distribution of match results. The paper aims to bridge the gap between statistical analysis and practical insights into football match outcomes by combining rigorous statistical modelling with user-friendly visualization techniques. This empirical study is methodologically sound and easily interpretable by a wide range of readers, including those interested in sports analytics, team strategy, and predictive modelling in sports contexts. The findings aim to foster a better understanding of how on-field events such as yellow cards can influence the flow and eventual outcome of football games, adding to the ongoing discussion about quantitative analysis of sports data.
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+## Other outcome : Referees decision on yellow card 
 
-## Second discussion point
+The study by Jimmy Tanamati Soares and Lior Shamir examines the impact of team reputation factors, such as team rank, budget, and home game audience size, on referee decisions regarding penalty kicks and yellow cards in soccer (Soares, J. T., & Shamir, L. 2016). The researchers analyzed data from four major European soccer leagues over five seasons, focusing on subjective and potentially biased decisions. They found a significant correlation between the chance of a foul resulting in a yellow card and both the team's rank and budget in leagues like the Bundesliga, suggesting a possible bias in favor of more reputable teams. However, these correlations were not uniformly significant across all leagues. The study also found that the likelihood of a play inside the penalty box leading to a penalty kick was not dependent on the team's budget and rank. The findings support some soccer fans' beliefs that referees may favor certain teams, but they also highlight that most referee decisions are not correlated with team reputation (Soares, J. T., & Shamir, L. 2016).
+The paper discusses a study that is consistent with Soares and Shamir's research on referee decisions in home games. The study investigates the effect of yellow cards on match outcomes, with a focus on the link between home yellow cards and away goals. Although the study found no statistically significant relationship between home yellow cards and away goals, it does raise questions about the impact of external factors such as team reputation on referee decisions. The paper also investigates how in-game disciplinary measures against home teams, such as yellow cards, relate to away team scoring performance, adding to the discussion about refereeing's impact on sport dynamics. Both studies emphasize the difficulty of isolating refereeing's effects on match results. The paper calls for more research with a broader set of variables and advanced statistical models to gain a better understanding of the interactions between disciplinary actions, referee bias, team strategy, and their collective impact on the game.
 
-## Third discussion point
+## Implications
+Analyzing full-time away goals and yellow cards provides valuable insights into match dynamics, allowing teams to create effective game plans and optimize tactical strategies. This analysis also helps with player management by guiding training plans and development programs. It also helps players improve their discipline and decision-making on the field. Understanding how these factors influence match outcomes improves the narrative and drama of football matches for fans, allowing broadcasters and media outlets to highlight these relationships during match coverage. Fantasy football and betting fans can use this information to inform their predictions and betting strategies, enhancing the viewing experience.
+
+## Limitation 
+The analysis of full-time away goals and yellow cards in football is limited by its reliance on incomplete or error-prone data, which can introduce bias and affect results reliability. It also overlooks contextual factors like team strategy, match importance, player fatigue, and referee tendencies that could influence the relationship. The analysis also focuses on quantitative aspects of match outcomes, but may not fully capture qualitative aspects like team performance or match intensity. Additionally, its retrospective nature, relying on historical data, does not guarantee predictive accuracy, and real-time factors may influence match outcomes in unpredictable ways.
 
 ## Weaknesses and next steps
 
-Weaknesses and next steps should also be included.
-
-\newpage
-
-\appendix
-
-# Appendix {-}
-
-
-# Additional data details
-
-# Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
-
-
-
-
+The study of the relationship between full-time away goals and yellow cards in football games revealed advantages such as the use of Poisson regression for statistical analysis. However, weaknesses include data quality limitations, the need for more comprehensive variable selection and interpretation, model assumptions that are adequate, and transparency in code documentation. Addressing these flaws and seizing improvement opportunities will boost the analysis's credibility and provide useful insights into football match dynamics.
 
 \newpage
 

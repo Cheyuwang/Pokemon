@@ -26,7 +26,7 @@ football_sample <-
   slice_sample(n = 853)  # Randomly sample 1000 observations for modeling
 ### Model data ####
 
-football_model <- stan_glm(
+football <- stan_glm(
   formula = FTAG ~ AY,
   data = football_sample,
   family = poisson(link = "log"),  # Suitable for count data
@@ -37,7 +37,7 @@ football_model <- stan_glm(
 
 
 #### Save model ####
-saveRDS(football_model, file = "models/football_model.rds") 
+saveRDS(football, file = "models/football.rds") 
 
 
 
