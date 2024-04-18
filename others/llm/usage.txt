@@ -38,3 +38,20 @@ football <- tibble(
   )
 )
 
+User : Fix the error for me It does not show the results:  
+football <- glm(FTAG ~ HY, data = football, family = poisson())
+Error in as.data.frame.default(data) : 
+ cannot coerce class ‘c("glm", "lm")’ to a data.frame
+
+ChatGPT: 
+The error you're encountering, cannot coerce class ‘c("glm", "lm")’ to a data.frame, suggests that there's a misunderstanding in your code. It appears you are trying to use the same variable name, football, for both your data and your model output. This results in football being overwritten by the model object after the glm() function, and then when you try to use football again as a data frame for another operation or even the same model refitting, R cannot perform the operation because football is no longer a data frame but a model object.
+
+To resolve this, you should use different variable names for your data frame and your model. Here's how you can adjust your code to avoid this issue:
+
+# Assuming football_data is your data frame containing the data
+# Load your data correctly before this step
+football_data <- read.csv("path/to/your/football_data.csv")  # Make sure this path is correct
+# Now fit the model, using a different variable for the model
+football_model <- glm(FTAG ~ HY, data = football_data, family = poisson())
+
+# You can now safely use football_model for further analysis without overwriting your data
