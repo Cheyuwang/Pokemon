@@ -27,3 +27,7 @@ Aspects of the code were written with the help of the auto-complete tool, Codriv
 ## Author 
 
 Che-Yu Wang
+
+## LLM Usage
+
+An LLM, in particular Chat-GPT4.0, was used to aid in the writing of this paper. In particular, it was primarily used to aid with the coding aspect of the paper as opposed to the actual writing. The entire chat history can be found in inputs/llm/usage.txt. 
